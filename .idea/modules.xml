@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/gxb-management.iml" filepath="$PROJECT_DIR$/.idea/gxb-management.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youedata-base-support/youedata-base/youedata-base.iml" filepath="$PROJECT_DIR$/youedata-base-support/youedata-base/youedata-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youedata-base-support/youedata-base-auth/youedata-base-auth.iml" filepath="$PROJECT_DIR$/youedata-base-support/youedata-base-auth/youedata-base-auth.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youedata-base-support/youedata-base-support.iml" filepath="$PROJECT_DIR$/youedata-base-support/youedata-base-support.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youedata-base-support/youedata-generate/youedata-generate.iml" filepath="$PROJECT_DIR$/youedata-base-support/youedata-generate/youedata-generate.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youedata-main/youedata-main.iml" filepath="$PROJECT_DIR$/youedata-main/youedata-main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/youedata-base-support/youedata-system/youedata-system.iml" filepath="$PROJECT_DIR$/youedata-base-support/youedata-system/youedata-system.iml" />
+    </modules>
+  </component>
+</project>

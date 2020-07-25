@@ -1,0 +1,110 @@
+server:
+  port: 8080
+  max-http-header-size: 10240
+
+rest:
+  auth-open: false #jwt鉴权机制是否开启(true或者false)
+  sign-open: false #签名机制是否开启(true或false)
+
+beetl:
+  #热加载beetl模板，开发时候用
+  resource-auto-check: true
+
+swagger:
+  swagger-open: true
+
+spring:
+  profiles:
+    active: dev
+  mvc:
+    view:
+      prefix: /pages
+    async:
+      request-timeout: 100000
+  transaction:
+    default-timeout: 100000
+  servlet:
+    multipart:
+      max-request-size: 100MB
+      max-file-size: 100MB
+  jta:
+    atomikos:
+      properties:
+        max-actives: -1
+
+  application:
+    name: gxb-management-server
+
+mybatis-plus:
+  typeAliasesPackage: com.youedata.modular.system.model
+  mapper-locations:
+    - classpath*:com/youedata/**/mapping/*.xml
+
+log:
+  path: logs
+
+logging:
+  config: classpath:logback-spring.xml
+
+aes:
+  key: 4GRAuYPlLDEjywEB
+---
+
+##########################################################
+###################  开发环境的profile  ###################
+##########################################################
+# 库表检查
+databaseUrl: 36.155.112.19:3306
+databaseName: gxb_management
+
+spring:
+  profiles: dev
+  # Mysql数据库
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    baseUrl: jdbc:mysql://${databaseUrl}/information_schema?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${databaseUrl}/${databaseName}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+    username: gxb
+    password: gxb123
+    filters: wall,mergeStat
+    # 连接池大小根据实际情况调整
+    max-active: 20
+    max-pool-prepared-statement-per-connection-size: 20
+  redis:
+    host: 192.168.10.208
+    port: 6379
+    password: redis10086
+
+##dfs服务的配置
+#dfs:
+#  sendRequest: http://192.168.10.208:8481/fileUpload/upload
+#  socketTimeout: 90000
+#  connectTimeout: 90000
+##  watch: http://192.168.10.208:48080/
+#  watch: http://221.178.246.55:18080/
+---
+
+##########################################################
+###################  测试环境的profile  ###################
+##########################################################
+# 库表检查
+databaseUrl:
+databaseName:
+
+spring:
+  profiles: test
+  # Mysql数据库
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    baseUrl: jdbc:mysql://${databaseUrl}/information_schema?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+    url: jdbc:mysql://${databaseUrl}/${databaseName}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+    username:
+    password:
+    filters: wall,mergeStat
+    # 连接池大小根据实际情况调整
+    max-active: 20
+    max-pool-prepared-statement-per-connection-size: 20
+  redis:
+    host:
+    port: 46379
+    password:

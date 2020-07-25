@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youedata.sys.modular.system.mapper.GroupMapper">
+
+    <select id="selectUserByPost" resultType="Map">
+        SELECT
+        u.`account`,
+        g.name AS groupName
+        FROM
+        sys_user u
+        LEFT JOIN sys_group g ON g.id = u.group_id
+        WHERE
+        u.status = "ENABLE"
+    </select>
+
+</mapper>

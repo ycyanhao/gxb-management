@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="youedata-base" />
+        <module name="youedata-base-auth" />
+        <module name="youedata-generate" />
+        <module name="youedata-main" />
+        <module name="youedata-system" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="dx-check-server" target="1.8" />
+      <module name="gxb-management" target="1.8" />
+      <module name="youedata-base" target="1.8" />
+      <module name="youedata-base-auth" target="1.8" />
+      <module name="youedata-base-support" target="1.8" />
+      <module name="youedata-dfs" target="1.8" />
+      <module name="youedata-generate" target="1.8" />
+      <module name="youedata-main" target="1.8" />
+      <module name="youedata-system" target="1.8" />
+      <module name="zktr-management" target="1.8" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

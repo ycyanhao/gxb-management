@@ -1,0 +1,112 @@
+server:
+  port: 8081
+  
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 500MB
+      max-request-size: 500MB
+  main: 
+    allow-bean-definition-overriding: true
+    
+rest:
+  auth-open: false #jwt鉴权机制是否开启(true或者false)
+  sign-open: false #签名机制是否开启(true或false)
+
+jwt:
+  header: Authorization   #http请求头所需要的字段
+  secret: mySecret        #jwt秘钥
+  expiration: 604800      #7天 单位:秒
+  auth-path: auth         #认证请求的路径
+  md5-key: randomKey      #md5加密混淆key   
+
+file:
+  multipart:
+    uploadtype: png,bmp,gif,jpg,jpeg,doc,docx,xls,xlsx,pdf,m4a,rar,zip  #支持的上传文件格式
+  dblog-open: true   #是否进行数据库表记录
+  delete-open: false   #是否进行文件删除
+  
+swagger:
+  api-open: true #是否开启swagger api文档访问，默认开启
+
+mybatis-plus:
+  mapper-locations: classpath*:com/youedata/dfs/**/mapping/*.xml
+  typeAliasesPackage: com.youedata.dfs.**.model
+  global-config:
+    id-type: 0  #0:数据库ID自增   1:用户输入id  2:全局唯一id(IdWorker)  3:全局唯一ID(uuid)
+    db-column-underline: false
+    refresh-mapper: true
+  configuration:
+    map-underscore-to-camel-case: false
+    cache-enabled: true #配置的缓存的全局开关
+    lazyLoadingEnabled: true #延时加载的开关
+    multipleResultSetsEnabled: true #开启的话，延时加载一个属性时会加载该对象全部属性，否则按需加载属性
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #打印sql语句,调试用
+
+
+---
+##########################################################
+###################  开发环境的profile  ###################
+##########################################################
+# 库表检查
+databaseUrl: 192.168.10.208:3306
+databaseName: dxocr_dfs
+
+spring:
+  profiles: dev
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      baseUrl: jdbc:mysql://${databaseUrl}/information_schema?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://${databaseUrl}/${databaseName}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+      username: root
+      password: YCyouedata89757!
+      type: com.alibaba.druid.pool.DruidDataSource
+
+fdfs:
+  tracker-list:
+  - 192.168.10.208:22124
+  so-timeout: 15010
+  connect-timeout: 16010
+  thumb-image:
+    width: 150
+    height: 150
+  pool:
+    max-total: 153
+    max-wait-millis: 102
+    jmx-name-base: 1
+    jmx-name-prefix: 1
+
+
+---
+##########################################################
+###################  测试环境的profile  ###################
+##########################################################
+# 库表检查
+databaseUrl: 192.168.102.194:43306
+databaseName: dxocr_dfs
+
+spring:
+  profiles: test
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      baseUrl: jdbc:mysql://${databaseUrl}/information_schema?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=Asia/Shanghai
+      url: jdbc:mysql://${databaseUrl}/${databaseName}?autoReconnect=true&useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=CONVERT_TO_NULL&useSSL=false&serverTimezone=CTT
+      username: root
+      password: Abc_123456
+      type: com.alibaba.druid.pool.DruidDataSource
+
+fdfs:
+  tracker-list:
+  - 192.168.102.194:22122
+  so-timeout: 15010
+  connect-timeout: 16010
+  thumb-image:
+    width: 150
+    height: 150
+  pool:
+    max-total: 153
+    max-wait-millis: 102
+    jmx-name-base: 1
+    jmx-name-prefix: 1
