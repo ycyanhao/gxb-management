@@ -20,7 +20,7 @@
         <module>youedata-base-auth</module>
         <module>youedata-system</module>
         <module>youedata-generate</module>
-        <!--<module>youedata-dfs</module>-->
+        <module>youedata-dfs</module>
     </modules>
 
 </project>

@@ -36,180 +36,175 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Api(value="/fileUpload", tags="文件存储")
+@Api(value = "/fileUpload", tags = "文件存储")
 @Controller
 @RequestMapping("/fileUpload")
 public class FileUploadController {
-	
-	protected Logger logger = LoggerFactory.getLogger(this.getClass());
-	
-//	private String dateFormat = "YYYY-MM-dd HH:mm:ss";
-	
+
+    protected Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private DefaultFastFileStorageClient storageClient;
-    
+
     @Autowired
     private FileLogProperties fileLogProperties;
-    
+
     @Autowired
     private FileLogService fileLogService;
-    
-//    @Autowired
-//    private FileService fileService;
-    
+
     /**
      * 文件上传
-     * 
+     *
      * @param file
      * @return
      * @throws IOException
      */
-	@SuppressWarnings("rawtypes")
-	@PostMapping("/upload")
-	@ApiOperation(value = "文件上传", notes = "/upload")
+    @SuppressWarnings("rawtypes")
+    @PostMapping("/upload")
+    @ApiOperation(value = "文件上传", notes = "/upload")
     @ResponseBody
-    public ApiResult upload(@ApiParam @RequestParam(name = "file", required=true) MultipartFile file) throws IOException {
-		logger.info("[文件上传] file={}", file);
+    public ApiResult upload(@ApiParam @RequestParam(name = "file", required = true) MultipartFile file) throws IOException {
+        logger.info("[文件上传] file={}", file);
         String noGroupPath = "";//存储在fastdfs不带组的路径
         //暂时不支持多文件上传,后续版本可以再加上checkFile
         if (!file.isEmpty()) {
             try {
-            	StorePath path = storageClient.uploadFile(UpLoadConstant.DEFAULT_GROUP, file.getInputStream(), file.getSize(), FileUtil.extName(file.getOriginalFilename()));
-            	logger.info("[文件上传]path={}", path);
+                StorePath path = storageClient.uploadFile(UpLoadConstant.DEFAULT_GROUP, file.getInputStream(), file.getSize(), FileUtil.extName(file.getOriginalFilename()));
+                logger.info("[文件上传]path={}", path);
                 if (path == null) {
                     return ApiResult.fail("上传文件服务端操作异常:获取存储后的文件路径异常");
                 }
                 noGroupPath = path.getPath();
                 logger.info("[文件上传] noGroupPath={}", noGroupPath);
-                
+
                 //添加数据库记录：如果开关打开，则进行记录
                 boolean dblogOpen = fileLogProperties.isDblogOpen();
                 logger.info("[文件上传]数据库记录:dblogOpen={}", dblogOpen);
-                if( dblogOpen ) {
-                	FileStoreLog log = new FileStoreLog();
-                	log.setCreateTime(new Date());
-                	log.setDelFlag("N");
-                	log.setFileName(file.getOriginalFilename());
-                	log.setFilePath(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
-                	fileLogService.addLog(log);
-                	logger.info("[文件上传]数据库记录:日志信息={}", log);
+                if (dblogOpen) {
+                    FileStoreLog log = new FileStoreLog();
+                    log.setCreateTime(new Date());
+                    log.setDelFlag("N");
+                    log.setFileName(file.getOriginalFilename());
+                    log.setFilePath(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
+                    fileLogService.addLog(log);
+                    logger.info("[文件上传]数据库记录:日志信息={}", log);
                 }
-                
+
             } catch (FdfsServerException e) {
-            	logger.error("[文件上传]服务端操作异常:", e);
-            	if( ErrorCodeConstants.ERR_NO_ENOSPC == e.getErrorCode() ) {
-            		return ApiResult.fail("上传文件服务端操作异常:没有足够的存储空间");
-            	}else {
-            		return ApiResult.fail("上传文件服务操作异常");
-            	}
+                logger.error("[文件上传]服务端操作异常:", e);
+                if (ErrorCodeConstants.ERR_NO_ENOSPC == e.getErrorCode()) {
+                    return ApiResult.fail("上传文件服务端操作异常:没有足够的存储空间");
+                } else {
+                    return ApiResult.fail("上传文件服务操作异常");
+                }
             } catch (Exception e) {
                 logger.error("[文件上传]服务操作异常:", e);
                 return ApiResult.fail("上传文件服务端操作异常");
             }
-        }else {
-        	logger.error("上传的文件内容为空");
+        } else {
+            logger.error("上传的文件内容为空");
             return ApiResult.fail("上传的文件内容为空");
         }
 
         return ApiResult.success(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
     }
-	
-	/**
-	 * 文件上传-批量
-	 * 
-	 * @param file
-	 * @return
-	 * @throws IOException
-	 */
-	@SuppressWarnings("rawtypes")
-	@PostMapping("/upload/batch")
-	@ApiOperation(value = "文件上传-批量", notes = "/upload/batch")
-	@ResponseBody
-	public ApiResult uploadByBatch(@ApiParam() @RequestParam(name = "files", required=true) MultipartFile[] files) throws IOException {
-		logger.info("[文件上传-批量] files={}", files);
-		String noGroupPath = "";//存储在fastdfs不带组的路径
-		//暂时不支持多文件上传,后续版本可以再加上checkFile
-		List<String> result = new ArrayList<String>();
-		for(MultipartFile file : files) {
-			if (!file.isEmpty()) {
-				String fileName = file.getName();
-				try {
-					StorePath path = storageClient.uploadFile(UpLoadConstant.DEFAULT_GROUP, file.getInputStream(), file.getSize(), FileUtil.extName(file.getOriginalFilename()));
-					logger.info("[文件上传] [{}] path={}", fileName, path);
-					if (path == null) {
-						return ApiResult.fail("上传文件服务端操作异常:获取存储后的文件路径异常-"+fileName);
-					}
-					noGroupPath = path.getPath();
-					logger.info("[文件上传] [{}] noGroupPath={}", fileName, noGroupPath);
-					
-					//添加数据库记录：如果开关打开，则进行记录
-					boolean dblogOpen = fileLogProperties.isDblogOpen();
-					logger.info("[文件上传] [{}] 数据库记录:dblogOpen={}", fileName, dblogOpen);
-					if( dblogOpen ) {
-						FileStoreLog log = new FileStoreLog();
-						log.setCreateTime(new Date());
-						log.setDelFlag("N");
-						log.setFileName(file.getOriginalFilename());
-						log.setFilePath(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
-						fileLogService.addLog(log);
-						logger.info("[文件上传] [{}] 数据库记录:日志信息={}", fileName, log);
-					}
-					
-				} catch (FdfsServerException e) {
-					logger.error("[文件上传][" + fileName + "]服务端操作异常:", e);
-					if( ErrorCodeConstants.ERR_NO_ENOSPC == e.getErrorCode() ) {
-						return ApiResult.fail("上传文件服务端操作异常:没有足够的存储空间");
-					}else {
-						return ApiResult.fail("上传文件服务操作异常");
-					}
-				} catch (Exception e) {
-					logger.error("[文件上传][" + fileName + "]服务操作异常:", e);
-					return ApiResult.fail("上传文件服务端操作异常-"+fileName);
-				}
-				result.add(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
-			}else {
-				logger.error("上传的文件内容为空");
-				return ApiResult.fail("上传的文件内容为空");
-			}
-		}
-		
-		return ApiResult.success(result);
-	}
-        
+
+    /**
+     * 文件上传-批量
+     *
+     * @param files
+     * @return
+     * @throws IOException
+     */
+    @SuppressWarnings("rawtypes")
+    @PostMapping("/upload/batch")
+    @ApiOperation(value = "文件上传-批量", notes = "/upload/batch")
+    @ResponseBody
+    public ApiResult uploadByBatch(@ApiParam() @RequestParam(name = "files") MultipartFile[] files) throws IOException {
+        logger.info("[文件上传-批量] files={}", files);
+        String noGroupPath = "";//存储在fastdfs不带组的路径
+        //暂时不支持多文件上传,后续版本可以再加上checkFile
+        List<String> result = new ArrayList<String>();
+        for (MultipartFile file : files) {
+            if (!file.isEmpty()) {
+                String fileName = file.getName();
+                try {
+                    StorePath path = storageClient.uploadFile(UpLoadConstant.DEFAULT_GROUP, file.getInputStream(), file.getSize(), FileUtil.extName(file.getOriginalFilename()));
+                    logger.info("[文件上传] [{}] path={}", fileName, path);
+                    if (path == null) {
+                        return ApiResult.fail("上传文件服务端操作异常:获取存储后的文件路径异常-" + fileName);
+                    }
+                    noGroupPath = path.getPath();
+                    logger.info("[文件上传] [{}] noGroupPath={}", fileName, noGroupPath);
+
+                    //添加数据库记录：如果开关打开，则进行记录
+                    boolean dblogOpen = fileLogProperties.isDblogOpen();
+                    logger.info("[文件上传] [{}] 数据库记录:dblogOpen={}", fileName, dblogOpen);
+                    if (dblogOpen) {
+                        FileStoreLog log = new FileStoreLog();
+                        log.setCreateTime(new Date());
+                        log.setDelFlag("N");
+                        log.setFileName(file.getOriginalFilename());
+                        log.setFilePath(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
+                        fileLogService.addLog(log);
+                        logger.info("[文件上传] [{}] 数据库记录:日志信息={}", fileName, log);
+                    }
+
+                } catch (FdfsServerException e) {
+                    logger.error("[文件上传][" + fileName + "]服务端操作异常:", e);
+                    if (ErrorCodeConstants.ERR_NO_ENOSPC == e.getErrorCode()) {
+                        return ApiResult.fail("上传文件服务端操作异常:没有足够的存储空间");
+                    } else {
+                        return ApiResult.fail("上传文件服务操作异常");
+                    }
+                } catch (Exception e) {
+                    logger.error("[文件上传][" + fileName + "]服务操作异常:", e);
+                    return ApiResult.fail("上传文件服务端操作异常-" + fileName);
+                }
+                result.add(UpLoadConstant.DEFAULT_GROUP + "/" + noGroupPath);
+            } else {
+                logger.error("上传的文件内容为空");
+                return ApiResult.fail("上传的文件内容为空");
+            }
+        }
+
+        return ApiResult.success(result);
+    }
+
     /**
      * 文件下载
-     * 	示例：http://localhost:8081/fileUpload/download?filePath=group1/M00/00/25/wKgK0FzPu1CAHXFIAXXO03NOmaw322.zip&fileName=xxx.zip
-     * 
-     * @param filePath 文件上传返回值，绝对或相对URL地址，必填
-     * @param backFileName 非必填，指定下载文件名称，包含后缀名：
+     * 示例：http://localhost:8081/fileUpload/download?filePath=group1/M00/00/25/wKgK0FzPu1CAHXFIAXXO03NOmaw322.zip&fileName=xxx.zip
+     *
+     * @param filePath         文件上传返回值，绝对或相对URL地址，必填
+     * @param downloadFileName 非必填，指定下载文件名称，包含后缀名：
      * @param request
      * @param response
      * @throws IOException
      */
     @GetMapping(value = "/download")
     @ApiOperation(value = "文件下载", notes = "/download")
-	@ApiImplicitParams({
-	  @ApiImplicitParam(name = "filePath", value = "文件路径，相对url或绝对url", required = true, defaultValue="", paramType = "query", dataType = "String"),
-	  @ApiImplicitParam(name = "downloadFileName", value = "指定文件下载名称", required = false, defaultValue="", paramType = "query", dataType = "String")
-	})
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "filePath", value = "文件路径，相对url或绝对url", required = true, defaultValue = "", paramType = "query", dataType = "String"),
+            @ApiImplicitParam(name = "downloadFileName", value = "指定文件下载名称", defaultValue = "", paramType = "query", dataType = "String")
+    })
     public void download(String filePath,
                          String downloadFileName,
-                         HttpServletRequest request, 
+                         HttpServletRequest request,
                          HttpServletResponse response)
             throws IOException {
-    	logger.info("下载文件filePath-{},downloadFileName-{}", filePath, downloadFileName);
-    	//如果是绝对url，则截取处理
-    	if( filePath.toLowerCase().startsWith("http://") ) {
-    		filePath = filePath.substring(filePath.indexOf("/group")+1);
-    	}
-    	logger.info("下载文件filePath-{}", filePath);
-    	
+        logger.info("下载文件filePath-{},downloadFileName-{}", filePath, downloadFileName);
+        //如果是绝对url，则截取处理
+        if (filePath.toLowerCase().startsWith("http://")) {
+            filePath = filePath.substring(filePath.indexOf("/group") + 1);
+        }
+        logger.info("下载文件filePath-{}", filePath);
+
         GroupPath groupPath = parseFromFullPath(filePath);
         //文件大小
         long fileSize = storageClient.queryFileInfo(groupPath.getGroup(), groupPath.getPath()).getFileSize();
         logger.info("下载文件fileSize-{}", fileSize);
         //存储文件名称
-        String fileName = filePath.substring(filePath.lastIndexOf("/")+1);
+        String fileName = filePath.substring(filePath.lastIndexOf("/") + 1);
         if (StringUtils.hasText(downloadFileName)) {
             fileName = downloadFileName;
         }
@@ -220,15 +215,15 @@ public class FileUploadController {
 
         logger.info("下载文件fileName-{}", fileName);
         try {
-        	addDownloadHeader(request, response, fileName, fileSize);
-        }catch(Exception e) {
-        	throw new IllegalArgumentException(String.format("文件[%s]请求头设置异常", fileName));
+            addDownloadHeader(request, response, fileName, fileSize);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(String.format("文件[%s]请求头设置异常", fileName));
         }
-        
+
         OutputStream out = response.getOutputStream();
         storageClient.downloadFile(groupPath.getGroup(), groupPath.getPath(), (DownloadCallback<Void>) in -> {
             try {
-            	int downloadSize = IOUtils.copy(in,out);
+                int downloadSize = IOUtils.copy(in, out);
                 logger.info("downloadSize-{}", downloadSize);
             } finally {
                 IOUtils.closeQuietly(in);
@@ -236,7 +231,7 @@ public class FileUploadController {
             return null;
         });
     }
-    
+
 //    /**
 //     * 范围查询
 //     * 
@@ -272,7 +267,7 @@ public class FileUploadController {
 //    	
 //    	return  ApiResult.success(count);
 //    }
-    
+
 //    /**
 //     * 文件数据回退-针对测试数据
 //     * 
@@ -402,20 +397,20 @@ public class FileUploadController {
 //		}
 //				
 //	}
-	
-    private static GroupPath parseFromFullPath(String fullPath){
+
+    private static GroupPath parseFromFullPath(String fullPath) {
         if (!StringUtils.hasText(fullPath)) {
-            throw new IllegalArgumentException(String.format("全路径[%s]不能为空",fullPath));
+            throw new IllegalArgumentException(String.format("全路径[%s]不能为空", fullPath));
         }
 
         int firstSlash = fullPath.indexOf("/");
-        String group = fullPath.substring(0,firstSlash);
+        String group = fullPath.substring(0, firstSlash);
         String path = fullPath.substring(firstSlash + 1);
 
         return new GroupPath(group, path);
     }
-    
-    private static class GroupPath{
+
+    private static class GroupPath {
         private String group;
         private String path;
 
@@ -429,7 +424,7 @@ public class FileUploadController {
         }
 
         @SuppressWarnings("unused")
-		public void setGroup(String group) {
+        public void setGroup(String group) {
             this.group = group;
         }
 
@@ -438,40 +433,40 @@ public class FileUploadController {
         }
 
         @SuppressWarnings("unused")
-		public void setPath(String path) {
+        public void setPath(String path) {
             this.path = path;
         }
     }
-    
 
-	/**
-	 * 设置文件下载头信息
-	 *
-	 * @param request
-	 * @param response
-	 * @param fileName 文件名
-	 * @param fileSize 文件大小
-	 * @throws Exception
-	 */
-	@SuppressWarnings("static-access")
-	public void addDownloadHeader(HttpServletRequest request, HttpServletResponse response, String fullfileName, long fileSize ) throws Exception {
-		
-		response.setContentType("application/octet-stream");
-		response.setStatus(response.SC_OK);
-		response.setHeader("Content-Length", String.valueOf(fileSize));  
 
-		String agent = request.getHeader("USER-AGENT");
-		String fileName = fullfileName.substring(0, fullfileName.lastIndexOf("."));
-		String fileExtend = fullfileName.substring(fullfileName.lastIndexOf(".")+1);
-		if (null != agent && -1 != agent.indexOf("MSIE")) { // IE
-			response.setHeader("Content-Disposition",
-					"attachment; filename=" + URLEncoder.encode(fileName, "UTF-8") + "." + fileExtend);
+    /**
+     * 设置文件下载头信息
+     *
+     * @param request
+     * @param response
+     * @param fullfileName 文件名
+     * @param fileSize 文件大小
+     * @throws Exception
+     */
+    @SuppressWarnings("static-access")
+    public void addDownloadHeader(HttpServletRequest request, HttpServletResponse response, String fullfileName, long fileSize) throws Exception {
 
-		} else if (null != agent && -1 != agent.indexOf("Mozilla")) { // FireFox,Chrome,360
-			String codedFileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
-			response.setHeader("Content-Disposition", "attachment; filename=" + codedFileName + "." + fileExtend);
-		}
+        response.setContentType("application/octet-stream");
+        response.setStatus(response.SC_OK);
+        response.setHeader("Content-Length", String.valueOf(fileSize));
 
-	}
+        String agent = request.getHeader("USER-AGENT");
+        String fileName = fullfileName.substring(0, fullfileName.lastIndexOf("."));
+        String fileExtend = fullfileName.substring(fullfileName.lastIndexOf(".") + 1);
+        if (null != agent && -1 != agent.indexOf("MSIE")) { // IE
+            response.setHeader("Content-Disposition",
+                    "attachment; filename=" + URLEncoder.encode(fileName, "UTF-8") + "." + fileExtend);
+
+        } else if (null != agent && -1 != agent.indexOf("Mozilla")) { // FireFox,Chrome,360
+            String codedFileName = new String(fileName.getBytes("UTF-8"), "ISO8859-1");
+            response.setHeader("Content-Disposition", "attachment; filename=" + codedFileName + "." + fileExtend);
+        }
+
+    }
 
 }
