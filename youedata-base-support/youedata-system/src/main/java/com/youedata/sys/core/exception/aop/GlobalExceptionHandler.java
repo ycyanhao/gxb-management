@@ -80,7 +80,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponseData business(ServiceException e) {
-        LogManager.me().executeLog(LogTaskFactory.exceptionLog(UserHolder.getUserId(), UserHolder.getUserName() , e));
+        LogManager.me().executeLog(LogTaskFactory.exceptionLog(UserHolder.getUserId().toString(), UserHolder.getUserName() , e));
 
         getRequest().setAttribute("tip", e.getMessage());
         log.error("业务异常:", e);
@@ -94,7 +94,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponseData redisConnectionFailure(RuntimeException e) {
-        LogManager.me().executeLog(LogTaskFactory.exceptionLog(UserHolder.getUserId(), UserHolder.getUserName() , e));
+        LogManager.me().executeLog(LogTaskFactory.exceptionLog(UserHolder.getUserId().toString(), UserHolder.getUserName() , e));
 
         getRequest().setAttribute("tip", "Redis连接失败异常");
         log.error("运行时异常:", e);
@@ -108,7 +108,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public ErrorResponseData notFound(RuntimeException e) {
-        LogManager.me().executeLog(LogTaskFactory.exceptionLog(UserHolder.getUserId(), UserHolder.getUserName() , e));
+        LogManager.me().executeLog(LogTaskFactory.exceptionLog(UserHolder.getUserId().toString(), UserHolder.getUserName() , e));
 
         getRequest().setAttribute("tip", "服务器未知运行时异常");
         log.error("运行时异常:", e);

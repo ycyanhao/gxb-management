@@ -28,12 +28,12 @@ public class PageFactory {
     /**
      * 每页大小的param名称
      */
-    private static final String PAGE_SIZE_PARAM_NAME = "pageSize";
+    private static final String PAGE_SIZE_PARAM_NAME = "limit";
 
     /**
      * 第几页的param名称
      */
-    private static final String PAGE_NO_PARAM_NAME = "pageNum";
+    private static final String PAGE_NO_PARAM_NAME = "page";
 
     /**
      * 升序还是降序的param名称
@@ -51,7 +51,7 @@ public class PageFactory {
      */
     public static <T> Page<T> defaultPage() {
 
-        int pageSize = 20;
+        int pageSize = 10;
         int pageNo = 1;
 
         HttpServletRequest request = HttpContext.getRequest();

@@ -20,9 +20,9 @@ layui.use(['table', 'admin', 'ax', 'func'], function () {
             {type: 'checkbox'},
             <% for(item in table.fields!){ %>
             <% if(item.keyFlag){ %>
-            {field: '${item.propertyName}', hide: true, title: '${item.comment}'},
+            {field: '${item.propertyName}', align: 'center', hide: true, title: '${item.comment}'},
             <% }else{ %>
-            {field: '${item.propertyName}', sort: true, title: '${item.comment}'},
+            {field: '${item.propertyName}', align: 'center', sort: true, title: '${item.comment}'},
             <% } %>
             <% } %>
             {align: 'center', toolbar: '#tableBar', title: '操作'}

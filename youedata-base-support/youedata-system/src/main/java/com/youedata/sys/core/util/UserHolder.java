@@ -24,15 +24,13 @@ public class UserHolder {
      * @return
      */
     public static User getUser() {
-        return getContext().getUser();
-/*         紫夜寒风
+//        return getContext().getUser();
 
+        //紫夜寒风
         User user = new User();
-        user.setUserid("yanhaoceshi");
-        user.setUsername("紫夜寒风");
-        user.setUseridgroup("yanhaoceshi");
+        user.setUserId(1L);
+        user.setUserName("紫夜寒风");
         return user;
-*/
 
 //        管理员
 //        User user = new User();
@@ -47,9 +45,9 @@ public class UserHolder {
      *
      * @return
      */
-    public static String getUserId() {
+    public static Long getUserId() {
         if (null != getUser()) {
-            return getUser().getUserid();
+            return getUser().getUserId();
         }
         return null;
     }
@@ -61,27 +59,7 @@ public class UserHolder {
      */
     public static String getUserName() {
         if (null != getUser()) {
-            return getUser().getUsername();
-        }
-        return null;
-    }
-
-    /**
-     * 用户组 添加了all为空的处理
-     *
-     * @return
-     */
-    public static String getUseridgroup() {
-        if (null != getUser()) {
-            String useridgroup = getUser().getUseridgroup();
-            return StringUtils.isBlank(useridgroup) || StringUtils.equals("ALL", useridgroup.toUpperCase()) ? null : useridgroup;
-        }
-        return null;
-    }
-
-    public static List<String> getGroupUserIds() {
-        if (null != getUseridgroup()) {
-            return Arrays.asList(getUseridgroup().split(","));
+            return getUser().getUserName();
         }
         return null;
     }

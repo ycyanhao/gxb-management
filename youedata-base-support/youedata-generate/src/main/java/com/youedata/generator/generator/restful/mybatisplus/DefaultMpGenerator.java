@@ -46,7 +46,7 @@ public class DefaultMpGenerator extends AbstractMpGenerator {
         globalConfig.setEnableCache(false);
         globalConfig.setOpen(false);
         globalConfig.setAuthor(contextParam.getAuthor());
-        globalConfig.setIdType(IdType.UUID);
+        globalConfig.setIdType(IdType.ID_WORKER);
 
         globalConfig.setServiceName("I%sService");
         globalConfig.setServiceImplName("%sServiceImpl");

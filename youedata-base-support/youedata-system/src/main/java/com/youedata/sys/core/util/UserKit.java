@@ -101,9 +101,9 @@ public class UserKit {
      *
      * @return
      */
-    public String getUserId() {
+    public Long getUserId() {
         if (null != getUser()) {
-            return String.valueOf(getUser().getUserid());
+            return getUser().getUserId();
         }
         return null;
     }

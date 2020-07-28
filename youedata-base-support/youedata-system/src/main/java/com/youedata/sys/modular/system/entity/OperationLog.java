@@ -48,7 +48,6 @@ public class OperationLog implements Serializable {
     @TableField("user_id")
     private String userId;
 
-
     /**
      * 用户名称
      */

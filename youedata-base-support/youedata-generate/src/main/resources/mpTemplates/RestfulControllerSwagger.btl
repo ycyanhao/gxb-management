@@ -1,5 +1,6 @@
 package ${controllerPackage};
 
+import cn.stylefeng.roses.core.reqres.response.ResponseData;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.youedata.base.factory.PageFactory;
@@ -7,9 +8,12 @@ import com.youedata.base.tips.DCResponse;
 import ${package.Entity}.${entity};
 import ${package.EntitySpecParams}.${entity}DTO;
 import ${package.Service}.${table.serviceName};
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,10 +24,12 @@ import org.springframework.web.bind.annotation.*;
  * @author ${author}
  * @date ${tool.currentTime()}
  */
-@RestController
+@Controller
 @Api(value = "/${tool.lowerFirst(entity)}", tags = "${tool.cleanWhite(table.comment)}管理")
 @RequestMapping("/${tool.lowerFirst(entity)}")
 public class ${entity}Controller {
+
+    private String PREFIX = "${context.modularName}/${lowerEntity}";
 
     <% var lowerEntity = tool.lowerFirst(entity); %>
     <% var lowerEntityService = lowerEntity + 'Service'; %>
@@ -36,11 +42,14 @@ public class ${entity}Controller {
      * @author ${author}
      * @date ${date}
      */
-    @PostMapping("/add")
+    @ResponseBody
+    @PostMapping("/addItem")
     @ApiOperation(value = "新增")
-    public DCResponse<Void> add(@RequestBody ${entity}DTO ${lowerEntity}Dto) {
+    public DCResponse<Void> addItem(${entity}DTO ${lowerEntity}Dto) {
         ${entity} ${lowerEntity} = new ${entity}();
         BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
+        ${lowerEntity}.setCreateUser(UserHolder.getUserId());
+        ${lowerEntity}.setCreateTime(LocalDateTime.now());
         this.${lowerEntityService}.save(${lowerEntity});
         return DCResponse.ok(null);
     }
@@ -51,9 +60,10 @@ public class ${entity}Controller {
      * @author ${author}
      * @date ${date}
      */
-    @DeleteMapping("/deleteById")
+    @ResponseBody
+    @PostMapping("/delete")
     @ApiOperation("删除")
-    public DCResponse<Void> deleteById(@RequestParam("id") String id) {
+    public DCResponse<Void> delete(@RequestParam("id") String id) {
         this.${lowerEntityService}.removeById(id);
         return DCResponse.ok(null);
     }
@@ -64,13 +74,16 @@ public class ${entity}Controller {
      * @author ${author}
      * @date ${date}
      */
-    @PutMapping("/updateById")
+    @ResponseBody
+    @PutMapping("/editItem")
     @ApiOperation("根据ID修改信息")
-    public DCResponse<Void> updateById(@RequestBody ${entity}DTO ${lowerEntity}Dto) {
-       ${entity} ${lowerEntity} = new ${entity}();
-       BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
-       this.${lowerEntityService}.updateById(${lowerEntity});
-       return DCResponse.ok(null);
+    public DCResponse<Void> editItem(${entity}DTO ${lowerEntity}Dto) {
+        ${entity} ${lowerEntity} = new ${entity}();
+        BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
+        ${lowerEntity}.setUpdateUser(UserHolder.getUserId());
+        ${lowerEntity}.setUpdateTime(LocalDateTime.now());
+        this.${lowerEntityService}.updateById(${lowerEntity});
+        return DCResponse.ok(null);
     }
 
     /**
@@ -79,7 +92,8 @@ public class ${entity}Controller {
      * @author ${author}
      * @date ${date}
      */
-    @GetMapping("/queryDetailById")
+    @ResponseBody
+    @PostMapping("/detail")
     @ApiOperation(value = "根据主键查询单条详情")
     public DCResponse<${entity}> getById(@RequestParam("id") String id) {
         return DCResponse.ok(this.${lowerEntityService}.getById(id));
@@ -91,17 +105,57 @@ public class ${entity}Controller {
      * @author ${author}
      * @date ${date}
      */
-    @PostMapping("/queryListPage")
+    @ResponseBody
+    @GetMapping("/list")
     @ApiOperation(value = "分页查询列表")
     @ApiImplicitParams({
-        @ApiImplicitParam(name = "pageNum", value = "当前页码", required = true, defaultValue = "1", paramType = "query", dataType = "int", example = "1"),
-        @ApiImplicitParam(name = "pageSize", value = "每页多少条数据", required = true, defaultValue = "10", paramType = "query", dataType = "int", example = "20")
+        @ApiImplicitParam(name = "page", value = "当前页码", required = true, defaultValue = "1", paramType = "query", dataType = "int", example = "1"),
+        @ApiImplicitParam(name = "limit", value = "每页多少条数据", required = true, defaultValue = "10", paramType = "query", dataType = "int", example = "20")
     })
-    public DCResponse<Page<${entity}>> queryListPage(@RequestBody ${entity}DTO ${lowerEntity}Dto) {
+    public Object list(${entity}DTO ${lowerEntity}Dto) {
         ${entity} ${lowerEntity} = new ${entity}();
         BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
-        Page<${entity}> page = PageFactory.defaultPage();
-        return DCResponse.ok((Page<${entity}>) this.${lowerEntityService}.page(page,Wrappers.query(${lowerEntity})));
+
+        //获取分页参数
+        Page page = LayuiPageFactory.defaultPage();
+
+        //根据条件查询
+        page.setRecords(this.${lowerEntityService}.page(page, Wrappers.query(${lowerEntity})).getRecords());
+
+        return LayuiPageFactory.createPageInfo(page);
+    }
+
+    /**
+     * 跳转到主页面
+     *
+     * @author ${author}
+     * @Date ${date}
+     */
+    @RequestMapping()
+    public String index() {
+        return PREFIX + "/${lowerEntity}.html";
+    }
+
+    /**
+     * 新增页面
+     *
+     * @author ${author}
+     * @Date ${date}
+     */
+    @RequestMapping("/add")
+    public String add() {
+        return PREFIX + "/${lowerEntity}_add.html";
+    }
+
+    /**
+     * 编辑页面
+     *
+     * @author ${author}
+     * @Date ${date}
+     */
+    @RequestMapping("/edit")
+    public String edit() {
+        return PREFIX + "/${lowerEntity}_edit.html";
     }
 
 }
