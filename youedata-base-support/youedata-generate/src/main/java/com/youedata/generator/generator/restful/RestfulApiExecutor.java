@@ -2,6 +2,13 @@ package com.youedata.generator.generator.restful;
 
 import com.baomidou.mybatisplus.generator.config.po.TableInfo;
 import com.youedata.generator.generator.base.model.ContextParam;
+import com.youedata.generator.generator.common.html.PageAddGenerator;
+import com.youedata.generator.generator.common.html.PageEditGenerator;
+import com.youedata.generator.generator.common.html.PageIndexGenerator;
+import com.youedata.generator.generator.common.js.PageAddJsGenerator;
+import com.youedata.generator.generator.common.js.PageEditJsGenerator;
+import com.youedata.generator.generator.common.js.PageIndexJsGenerator;
+import com.youedata.generator.generator.common.sqls.MenuSqlGenerator;
 import com.youedata.generator.generator.restful.controller.RestfulControllerGenerator;
 import com.youedata.generator.generator.restful.feign.FeignApiGenerator;
 import com.youedata.generator.generator.restful.feign.FeignProviderGenerator;
@@ -36,6 +43,43 @@ public class RestfulApiExecutor {
             RestfulControllerGenerator restfulControllerGenerator = new RestfulControllerGenerator(map);
             restfulControllerGenerator.initContext(contextParam);
             restfulControllerGenerator.doGeneration();
+
+            /* 生成前端页面 */
+            //生成主页面html
+            PageIndexGenerator gunsPageIndexGenerator = new PageIndexGenerator(map);
+            gunsPageIndexGenerator.initContext(contextParam);
+            gunsPageIndexGenerator.doGeneration();
+
+            //生成主页面js
+            PageIndexJsGenerator gunsPageIndexJsGenerator = new PageIndexJsGenerator(map);
+            gunsPageIndexJsGenerator.initContext(contextParam);
+            gunsPageIndexJsGenerator.doGeneration();
+
+            //生成添加页面html
+            PageAddGenerator gunsPageAddGenerator = new PageAddGenerator(map);
+            gunsPageAddGenerator.initContext(contextParam);
+            gunsPageAddGenerator.doGeneration();
+
+            //生成添加页面的js
+            PageAddJsGenerator gunsPageAddJsGenerator = new PageAddJsGenerator(map);
+            gunsPageAddJsGenerator.initContext(contextParam);
+            gunsPageAddJsGenerator.doGeneration();
+
+            //生成编辑页面html
+            PageEditGenerator gunsPageEditGenerator = new PageEditGenerator(map);
+            gunsPageEditGenerator.initContext(contextParam);
+            gunsPageEditGenerator.doGeneration();
+
+            //生成编辑页面的js
+            PageEditJsGenerator gunsPageEditJsGenerator = new PageEditJsGenerator(map);
+            gunsPageEditJsGenerator.initContext(contextParam);
+            gunsPageEditJsGenerator.doGeneration();
+
+            //生成菜单的sql
+            MenuSqlGenerator gunsMenuSqlGenerator = new MenuSqlGenerator(map);
+            gunsMenuSqlGenerator.initContext(contextParam);
+            gunsMenuSqlGenerator.doGeneration();
+
         }
     }
 
