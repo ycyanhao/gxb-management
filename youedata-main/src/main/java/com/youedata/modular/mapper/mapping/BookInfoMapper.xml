@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youedata.modular.mapper.BookInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.youedata.modular.entity.BookInfo">
+        <id column="id" property="id" />
+        <result column="course_name" property="courseName" />
+        <result column="book_name" property="bookName" />
+        <result column="book_type" property="bookType" />
+        <result column="front_pic_url" property="frontPicUrl" />
+        <result column="back_pic_url" property="backPicUrl" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS "id", course_name AS "courseName", book_name AS "bookName", book_type AS "bookType", front_pic_url AS "frontPicUrl", back_pic_url AS "backPicUrl", create_time AS "createTime", update_time AS "updateTime", create_user AS "createUser", update_user AS "updateUser"
+    </sql>
+
+</mapper>

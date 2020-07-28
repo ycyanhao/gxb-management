@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.youedata.modular.mapper.ClassInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.youedata.modular.entity.ClassInfo">
+        <id column="id" property="id" />
+        <result column="class_no" property="classNo" />
+        <result column="course_name" property="courseName" />
+        <result column="train_level" property="trainLevel" />
+        <result column="train_form" property="trainForm" />
+        <result column="train_address" property="trainAddress" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="create_user" property="createUser" />
+        <result column="update_user" property="updateUser" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id AS "id", class_no AS "classNo", course_name AS "courseName", train_level AS "trainLevel", train_form AS "trainForm", train_address AS "trainAddress", create_time AS "createTime", update_time AS "updateTime", create_user AS "createUser", update_user AS "updateUser"
+    </sql>
+
+</mapper>

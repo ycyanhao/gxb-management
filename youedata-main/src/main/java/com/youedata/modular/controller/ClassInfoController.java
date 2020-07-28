@@ -1,13 +1,13 @@
-package ${controllerPackage};
+package com.youedata.modular.controller;
 
 import cn.stylefeng.roses.core.reqres.response.ResponseData;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.youedata.base.pojo.page.LayuiPageFactory;
 import com.youedata.base.tips.DCResponse;
-import ${package.Entity}.${entity};
-import ${package.EntitySpecParams}.${entity}DTO;
-import ${package.Service}.${table.serviceName};
+import com.youedata.modular.entity.ClassInfo;
+import com.youedata.modular.model.dto.ClassInfoDTO;
+import com.youedata.modular.service.IClassInfoService;
 import com.youedata.sys.core.util.UserHolder;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,92 +20,91 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 
+
 /**
- * ${tool.cleanWhite(table.comment)}控制器
+ * 班级信息控制器
  *
- * @author ${author}
- * @date ${tool.currentTime()}
+ * @author hao.yan
+ * @date 2020-07-28 15:42:27
  */
 @Controller
-@Api(value = "/${tool.lowerFirst(entity)}", tags = "${tool.cleanWhite(table.comment)}管理")
-@RequestMapping("/${tool.lowerFirst(entity)}")
-public class ${entity}Controller {
+@Api(value = "/classInfo", tags = "班级信息管理")
+@RequestMapping("/classInfo")
+public class ClassInfoController {
 
-    private String PREFIX = "${context.modularName}/${lowerEntity}";
+    private String PREFIX = "/classInfo";
 
-    <% var lowerEntity = tool.lowerFirst(entity); %>
-    <% var lowerEntityService = lowerEntity + 'Service'; %>
     @Autowired
-    private ${table.serviceName} ${lowerEntityService};
+    private IClassInfoService classInfoService;
 
     /**
      * 新增
      *
-     * @author ${author}
-     * @date ${date}
+     * @author hao.yan
+     * @date 2020-07-28
      */
     @ResponseBody
     @PostMapping("/addItem")
     @ApiOperation(value = "新增")
-    public DCResponse<Void> addItem(${entity}DTO ${lowerEntity}Dto) {
-        ${entity} ${lowerEntity} = new ${entity}();
-        BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
-        ${lowerEntity}.setCreateUser(UserHolder.getUserId());
-        ${lowerEntity}.setCreateTime(LocalDateTime.now());
-        this.${lowerEntityService}.save(${lowerEntity});
+    public DCResponse<Void> addItem(ClassInfoDTO classInfoDto) {
+        ClassInfo classInfo = new ClassInfo();
+        BeanUtils.copyProperties(classInfoDto, classInfo);
+        classInfo.setCreateUser(UserHolder.getUserId());
+        classInfo.setCreateTime(LocalDateTime.now());
+        this.classInfoService.save(classInfo);
         return DCResponse.ok(null);
     }
 
     /**
      * 根据主键删除
      *
-     * @author ${author}
-     * @date ${date}
+     * @author hao.yan
+     * @date 2020-07-28
      */
     @ResponseBody
     @PostMapping("/delete")
     @ApiOperation("删除")
     public DCResponse<Void> delete(@RequestParam("id") String id) {
-        this.${lowerEntityService}.removeById(id);
+        this.classInfoService.removeById(id);
         return DCResponse.ok(null);
     }
 
     /**
      * 修改
      *
-     * @author ${author}
-     * @date ${date}
+     * @author hao.yan
+     * @date 2020-07-28
      */
     @ResponseBody
     @PostMapping("/editItem")
     @ApiOperation("根据ID修改信息")
-    public DCResponse<Void> editItem(${entity}DTO ${lowerEntity}Dto) {
-        ${entity} ${lowerEntity} = new ${entity}();
-        BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
-        ${lowerEntity}.setUpdateUser(UserHolder.getUserId());
-        ${lowerEntity}.setUpdateTime(LocalDateTime.now());
-        this.${lowerEntityService}.updateById(${lowerEntity});
+    public DCResponse<Void> editItem(ClassInfoDTO classInfoDto) {
+        ClassInfo classInfo = new ClassInfo();
+        BeanUtils.copyProperties(classInfoDto, classInfo);
+        classInfo.setUpdateUser(UserHolder.getUserId());
+        classInfo.setUpdateTime(LocalDateTime.now());
+        this.classInfoService.updateById(classInfo);
         return DCResponse.ok(null);
     }
 
     /**
      * 根据主键查询单条详情
      *
-     * @author ${author}
-     * @date ${date}
+     * @author hao.yan
+     * @date 2020-07-28
      */
     @ResponseBody
     @PostMapping("/detail")
     @ApiOperation(value = "根据主键查询单条详情")
     public ResponseData detail(@RequestParam("id") String id) {
-        return ResponseData.success(this.${lowerEntityService}.getById(id));
+        return ResponseData.success(this.classInfoService.getById(id));
     }
 
     /**
      * 分页查询列表
      *
-     * @author ${author}
-     * @date ${date}
+     * @author hao.yan
+     * @date 2020-07-28
      */
     @ResponseBody
     @GetMapping("/list")
@@ -114,15 +113,15 @@ public class ${entity}Controller {
         @ApiImplicitParam(name = "page", value = "当前页码", required = true, defaultValue = "1", paramType = "query", dataType = "int", example = "1"),
         @ApiImplicitParam(name = "limit", value = "每页多少条数据", required = true, defaultValue = "10", paramType = "query", dataType = "int", example = "20")
     })
-    public Object list(${entity}DTO ${lowerEntity}Dto) {
-        ${entity} ${lowerEntity} = new ${entity}();
-        BeanUtils.copyProperties(${lowerEntity}Dto, ${lowerEntity});
+    public Object list(ClassInfoDTO classInfoDto) {
+        ClassInfo classInfo = new ClassInfo();
+        BeanUtils.copyProperties(classInfoDto, classInfo);
 
         //获取分页参数
         Page page = LayuiPageFactory.defaultPage();
 
         //根据条件查询
-        page.setRecords(this.${lowerEntityService}.page(page, Wrappers.query(${lowerEntity})).getRecords());
+        page.setRecords(this.classInfoService.page(page, Wrappers.query(classInfo)).getRecords());
 
         return LayuiPageFactory.createPageInfo(page);
     }
@@ -130,34 +129,34 @@ public class ${entity}Controller {
     /**
      * 跳转到主页面
      *
-     * @author ${author}
-     * @Date ${date}
+     * @author hao.yan
+     * @Date 2020-07-28
      */
     @RequestMapping()
     public String index() {
-        return PREFIX + "/${lowerEntity}.html";
+        return PREFIX + "/classInfo.html";
     }
 
     /**
      * 新增页面
      *
-     * @author ${author}
-     * @Date ${date}
+     * @author hao.yan
+     * @Date 2020-07-28
      */
     @RequestMapping("/add")
     public String add() {
-        return PREFIX + "/${lowerEntity}_add.html";
+        return PREFIX + "/classInfo_add.html";
     }
 
     /**
      * 编辑页面
      *
-     * @author ${author}
-     * @Date ${date}
+     * @author hao.yan
+     * @Date 2020-07-28
      */
     @RequestMapping("/edit")
     public String edit() {
-        return PREFIX + "/${lowerEntity}_edit.html";
+        return PREFIX + "/classInfo_edit.html";
     }
 
 }

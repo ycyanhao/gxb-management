@@ -1,0 +1,51 @@
+@layout("/common/_form.html",{js:["/assets/bookInfo/bookInfo_edit.js"]}){
+
+<form class="layui-form" id="bookInfoForm" lay-filter="bookInfoForm">
+    <div class="layui-fluid" style="padding-bottom: 75px;">
+        <div class="layui-card">
+            <div class="layui-card-header">基本信息</div>
+            <div class="layui-card-body">
+                <div class="layui-form-item layui-row">
+                    <input name="id" type="hidden"/>
+                    <div class="layui-inline layui-col-md12">
+                        <label class="layui-form-label">课程名称<span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <input id="courseName" name="courseName" placeholder="请输入课程名称" type="text" class="layui-input" lay-verify="required" required/>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md12">
+                        <label class="layui-form-label">教材名称<span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <input id="bookName" name="bookName" placeholder="请输入教材名称" type="text" class="layui-input" lay-verify="required" required/>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md12">
+                        <label class="layui-form-label">教材类型（00：出版教材；01：自编教材）<span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <input id="bookType" name="bookType" placeholder="请输入教材类型（00：出版教材；01：自编教材）" type="text" class="layui-input" lay-verify="required" required/>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md12">
+                        <label class="layui-form-label">教材正面封面URL<span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <input id="frontPicUrl" name="frontPicUrl" placeholder="请输入教材正面封面URL" type="text" class="layui-input" lay-verify="required" required/>
+                        </div>
+                    </div>
+                    <div class="layui-inline layui-col-md12">
+                        <label class="layui-form-label">教材背面图片URL<span style="color: red;">*</span></label>
+                        <div class="layui-input-block">
+                            <input id="backPicUrl" name="backPicUrl" placeholder="请输入教材背面图片URL" type="text" class="layui-input" lay-verify="required" required/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group-bottom text-center">
+        <button class="layui-btn" lay-filter="btnSubmit" lay-submit>&emsp;提交&emsp;</button>
+        <button type="reset" class="layui-btn layui-btn-primary" ew-event="closeDialog">&emsp;取消&emsp;</button>
+    </div>
+
+</form>
+
+@}
